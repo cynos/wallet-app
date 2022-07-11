@@ -1,0 +1,89 @@
+version: '3.9'
+services:
+  # emoney service
+  emoney-service:
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - 7100:8080
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - SERVICE=EMONEY_SERVICE
+      - JWT_SIG_KEY=${JWT_SIG_KEY}
+      - JWT_TOKEN_EXP=${JWT_TOKEN_EXP}
+      - JWT_LOGIN_EXP=${JWT_LOGIN_EXP}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - net1
+# topup service
+  topup-service:
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - 7200:8080
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - SERVICE=TOPUP_SERVICE
+      - JWT_SIG_KEY=${JWT_SIG_KEY}
+      - JWT_TOKEN_EXP=${JWT_TOKEN_EXP}
+      - JWT_LOGIN_EXP=${JWT_LOGIN_EXP}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - net1
+  # redis service
+  redis:
+    image: redis:6
+    container_name: redis
+    restart: always
+    networks:
+      - net1
+  # postgres service
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: j4k4rt42022
+      POSTGRES_DB: wallet_app
+    ports:
+      - 5434:5432
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    networks:
+      - net1
+networks:
+  net1:
+    driver: bridge

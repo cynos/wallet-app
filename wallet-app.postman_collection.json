@@ -1,0 +1,225 @@
+{
+	"info": {
+		"_postman_id": "831c40b7-42cc-4f77-b5f3-6a29c72df143",
+		"name": "wallet-app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9003393"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "setiabudi123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "setiabudi",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "setia budi",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "setyaboedy89@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:7100/register/",
+					"host": [
+						"localhost"
+					],
+					"port": "7100",
+					"path": [
+						"register",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "setiabudi123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "setiabudi",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:7100/login/",
+					"host": [
+						"localhost"
+					],
+					"port": "7100",
+					"path": [
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:7100/logout/",
+					"host": [
+						"localhost"
+					],
+					"port": "7100",
+					"path": [
+						"logout",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users/account",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:7100/users/account",
+					"host": [
+						"localhost"
+					],
+					"port": "7100",
+					"path": [
+						"users",
+						"account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users/balanceUpdate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"users_id\": 1,\n    \"amount\": 1000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:7100/users/balanceUpdate",
+					"host": [
+						"localhost"
+					],
+					"port": "7100",
+					"path": [
+						"users",
+						"balanceUpdate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users/topupHistory",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:7100/users/topupHistory",
+					"host": [
+						"localhost"
+					],
+					"port": "7100",
+					"path": [
+						"users",
+						"topupHistory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "topup/add",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\": 1000,\n    \"transaction_id\": \"trx001\",\n    \"remark\": \"testing\",\n    \"users_id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:7200/topup/add",
+					"host": [
+						"localhost"
+					],
+					"port": "7200",
+					"path": [
+						"topup",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "topup/1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:7200/topup/1",
+					"host": [
+						"localhost"
+					],
+					"port": "7200",
+					"path": [
+						"topup",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
