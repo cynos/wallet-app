@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/wallet-app/internal/domain/emoney/login"
+	"github.com/wallet-app/internal/domain/emoney/payment"
+	"github.com/wallet-app/internal/domain/emoney/product"
 	"github.com/wallet-app/internal/domain/emoney/register"
 	"github.com/wallet-app/internal/domain/emoney/users"
 	"github.com/wallet-app/internal/domain/topup"
@@ -33,27 +35,45 @@ func serviceEmoney() {
 	// migrate tables
 	db.AutoMigrate(
 		users.Users{},
+		payment.Payment{},
 	)
 
 	// init repo
 	usersRepo := users.NewRepository(db)
+	paymentRepo := payment.NewRepository(db)
 	// init usecase
 	usersUseCase := users.NewUseCase(usersRepo)
+	paymentUseCase := payment.NewUseCase(paymentRepo)
 	// init controller
 	usersController := users.NewHTTPController(usersUseCase, cacher)
 	loginController := login.NewHTTPController(usersUseCase)
 	registerController := register.NewHTTPController(usersUseCase)
+	productController := product.NewHTTPController(cacher)
+	paymentController := payment.NewHTTPController(paymentUseCase)
 
 	// routes
 	router := gin.Default()
-	router.POST("/register", registerController.Register)
-	router.POST("/login", loginController.Login)
-	router.GET("/logout", loginController.Logout)
+	{
+		router.POST("/register", registerController.Register)
+		router.POST("/login", loginController.Login)
+		router.GET("/logout", loginController.Logout)
+	}
 	{
 		rUsers := router.Group("/users")
 		rUsers.GET("/account", middleware.JWTAuthorization, usersController.UserAccount)
-		rUsers.GET("/topupHistory", middleware.JWTAuthorization, usersController.UserTopupHistory)
-		rUsers.POST("/balanceUpdate", usersController.UserBalanceUpdate)
+		rUsers.GET("/balance", middleware.JWTAuthorization, usersController.UserBalance)
+		rUsers.PUT("/balance", usersController.UserBalanceUpdate)
+		rUsers.GET("/topups", middleware.JWTAuthorization, usersController.UserTopups)
+		rUsers.GET("/payments", middleware.JWTAuthorization, usersController.UserPayments)
+	}
+	{
+		router.GET("/payment/:trx", middleware.JWTAuthorization, paymentController.PaymentGet)
+		router.POST("/payment", middleware.JWTAuthorization, paymentController.PaymentCreate)
+		router.POST("/payment/confirm/:trx", middleware.JWTAuthorization, paymentController.PaymentConfirm)
+	}
+	{
+		router.GET("/product", productController.ProductList)
+		router.GET("/product/detail/:id", productController.ProductDetail)
 	}
 
 	router.Run()

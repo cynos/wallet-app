@@ -23,19 +23,29 @@ func NewHTTPController(usersUseCase UseCase, cacher cache.Cacher) *HTTPControlle
 
 func (controller *HTTPController) UserAccount(c *gin.Context) {
 	userInfo := c.MustGet("userInfo").(jwt.MapClaims)
-	user, err := controller.usersUseCase.GetUserAccount(c, tools.StringsToInt(userInfo["UserID"].(string)))
+	userID := tools.StringsToInt(userInfo["UserID"].(string))
+	result, err := controller.usersUseCase.GetUserAccount(c, userID)
 	if err != nil {
 		response.Response(c, 400, false, "Record not found", gin.H{"error": err.Error()})
 		return
 	}
+	response.Response(c, 200, true, "Record found", gin.H{"data": result})
+}
 
-	data := make(map[string]interface{})
-	tools.ForEachStruct(user, func(key string, val interface{}) {
-		if key != "Topups" {
-			data[key] = val
-		}
-	})
-	response.Response(c, 200, true, "Record found", gin.H{"data": data})
+func (controller *HTTPController) UserBalance(c *gin.Context) {
+	var userID int
+	if c.Request.Header.Get("UserID") != "" {
+		userID = tools.StringsToInt(c.Request.Header.Get("UserID"))
+	} else {
+		userInfo := c.MustGet("userInfo").(jwt.MapClaims)
+		userID = tools.StringsToInt(userInfo["UserID"].(string))
+	}
+	result, err := controller.usersUseCase.GetUserBalance(c, userID)
+	if err != nil {
+		response.Response(c, 400, false, "Record not found", gin.H{"error": err.Error()})
+		return
+	}
+	response.Response(c, 200, true, "Record found", gin.H{"data": result})
 }
 
 func (controller *HTTPController) UserBalanceUpdate(c *gin.Context) {
@@ -49,28 +59,33 @@ func (controller *HTTPController) UserBalanceUpdate(c *gin.Context) {
 		return
 	}
 
-	user, err := controller.usersUseCase.GetUserAccount(c, params.UsersID)
+	err = controller.usersUseCase.SetUserBalance(c, params.UsersID, params.Amount)
 	if err != nil {
 		response.Response(c, 400, false, "Record not found", gin.H{"error": err.Error()})
-		return
-	}
-
-	user.Balance += int64(params.Amount)
-	user, err = controller.usersUseCase.Update(c, user, int(user.ID))
-	if err != nil {
-		response.Response(c, 400, false, "Failed update balance", gin.H{"error": err.Error()})
 		return
 	}
 
 	response.Response(c, 200, true, "Success update balance", nil)
 }
 
-func (controller *HTTPController) UserTopupHistory(c *gin.Context) {
+func (controller *HTTPController) UserTopups(c *gin.Context) {
 	userInfo := c.MustGet("userInfo").(jwt.MapClaims)
-	user, err := controller.usersUseCase.GetUserAccount(c, tools.StringsToInt(userInfo["UserID"].(string)))
+	userID := tools.StringsToInt(userInfo["UserID"].(string))
+	result, err := controller.usersUseCase.GetUserTopups(c, userID)
 	if err != nil {
 		response.Response(c, 400, false, "Record not found", gin.H{"error": err.Error()})
 		return
 	}
-	response.Response(c, 200, true, "Record found", gin.H{"data": user.Topups})
+	response.Response(c, 200, true, "Record found", gin.H{"data": result})
+}
+
+func (controller *HTTPController) UserPayments(c *gin.Context) {
+	userInfo := c.MustGet("userInfo").(jwt.MapClaims)
+	userID := tools.StringsToInt(userInfo["UserID"].(string))
+	result, err := controller.usersUseCase.GetUserPayments(c, userID)
+	if err != nil {
+		response.Response(c, 400, false, "Record not found", gin.H{"error": err.Error()})
+		return
+	}
+	response.Response(c, 200, true, "Record found", gin.H{"data": result})
 }

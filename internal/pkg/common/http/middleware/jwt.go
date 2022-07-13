@@ -16,6 +16,12 @@ func JWTAuthorization(c *gin.Context) {
 	var JWT_SIG_KEY = os.Getenv("JWT_SIG_KEY")
 	var JWT_LOGIN_EXP = os.Getenv("JWT_LOGIN_EXP")
 
+	if c.Request.Header.Get("InternalConnection") == "1" && c.Request.Header.Get("UserID") != "" {
+		c.Set("userID", c.Request.Header.Get("UserID"))
+		c.Next()
+		return
+	}
+
 	tokenString, err := cookies.App.SecureCookie["auth"].GetValue(nil, c.Request)
 	if err != nil {
 		cookies.App.SecureCookie["auth"].Delete(c.Writer)

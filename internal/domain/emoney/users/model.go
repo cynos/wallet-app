@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/wallet-app/internal/domain/emoney/payment"
 	"github.com/wallet-app/internal/domain/topup"
 )
 
@@ -18,6 +19,7 @@ type Users struct {
 	Token        string
 	Balance      int64
 	Topups       []topup.Topup
+	Payments     []payment.Payment
 }
 
 type Filter struct {

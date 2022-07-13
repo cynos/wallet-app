@@ -73,7 +73,7 @@ func (uc *usecase) UpdateBalance(ctx context.Context, amount, userid int) error 
 	resp, err := client.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(fmt.Sprintf(`{"users_id": %d, "amount": %d}`, userid, amount)).
-		Post("http://emoney-service:8080/users/balanceUpdate")
+		Put("http://emoney-service:8080/users/balance")
 	if err != nil {
 		return fmt.Errorf("cannot update balance, detail : %v", err.Error())
 	}

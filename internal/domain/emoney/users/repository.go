@@ -57,7 +57,7 @@ func (r *repository) GetAll(ctx context.Context, f Filter) (res []Users, err err
 }
 
 func (r *repository) GetByID(ctx context.Context, id int) (res Users, err error) {
-	result := r.db.Preload("Topups").Where("id = ?", id).Find(&res)
+	result := r.db.Preload("Topups").Preload("Payments").Where("id = ?", id).Find(&res)
 	return res, result.Error
 }
 
